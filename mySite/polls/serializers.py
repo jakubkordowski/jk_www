@@ -20,3 +20,26 @@ class OsobaSerializer(serializers.ModelSerializer):
         model = Osoba
         fields = ['id', 'imie', 'nazwisko', 'plec', 'data_dodania', 'stanowisko']
         read_only_fields = ['id']
+
+    def validate_imie(self, value):
+        if not value.isalpha():
+            raise serializers.ValidationError(
+                "Imie musi zawierac tylko litery.",
+            )
+        return value
+
+    def validate_data_dodania(self, value):
+        if value > datetime.now():
+            raise serializers.ValidationError(
+                "Data jest z przyszlosci.",
+            )
+        return value
+
+    def update(self, instance, validated_data):
+        instance.imie = validated_data.get('imie', instance.imie)
+        instance.nazwisko = validated_data.get('nazwisko', instance.nazwisko)
+        instance.plec = validated_data.get('plec', instance.plec)
+        instance.stanowisko = validated_data.get('stanowisko', instance.stanowisko)
+        instance.data_dodanie = validated_data.get('data_dodania', instance.data_dodania)
+        instance.save()
+        return instance
