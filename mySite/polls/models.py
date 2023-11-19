@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
 from django.utils import timezone
-
+from django.contrib.auth.models import User
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
@@ -39,7 +39,8 @@ class Osoba(models.Model):
     nazwisko = models.CharField(max_length=30)
     plec = models.IntegerField(choices=plec.choices, default=plec.INNE)
     stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
-    data_dodania=models.DateField(auto_now_add=True)
+    data_dodania = models.DateField(auto_now_add=True)
+    #wlasciciel = models.ForeignKey(User, related_name='Osoba', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.imie + " " + self.nazwisko

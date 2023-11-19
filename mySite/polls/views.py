@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Osoba, Stanowisko
 from .serializers import OsobaSerializer, StanowiskoSerializer
@@ -46,7 +48,7 @@ def osoba_list(request):
         serializer = OsobaSerializer(osoby, many=True)
         return Response(serializer.data)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def osoba_detail(request, pk):
     try:
         osoba = Osoba.objects.get(pk=pk)
@@ -58,7 +60,16 @@ def osoba_detail(request, pk):
         serializer = OsobaSerializer(osoba)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+@api_view(['PUT', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def osoba_update_delete(request, pk):
+    try:
+        osoba = Osoba.objects.get(pk=pk)
+    except Osoba.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
         serializer = OsobaSerializer(osoba, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -75,3 +86,12 @@ def osoba_string(request, string):
         osoba = Osoba.objects.filter(nazwisko__contains=string)
         serializer = OsobaSerializer(osoba, many=True)
         return Response(serializer.data)
+
+@api_view(['POST'])
+def osoba_put(request):
+    if request.method == 'POST':
+        serializer = OsobaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(wlasciciel=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
