@@ -19,7 +19,8 @@ class OsobaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Osoba
         fields = ['id', 'imie', 'nazwisko', 'plec', 'data_dodania', 'stanowisko', 'wlasciciel']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'wlasciciel']
+        wlasciciel = serializers.ReadOnlyField(source='User.username')
 
     def validate_imie(self, value):
         if not value.isalpha():

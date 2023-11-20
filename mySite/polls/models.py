@@ -40,7 +40,7 @@ class Osoba(models.Model):
     plec = models.IntegerField(choices=plec.choices, default=plec.INNE)
     stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
     data_dodania = models.DateField(auto_now_add=True)
-    #wlasciciel = models.ForeignKey(User, related_name='Osoba', on_delete=models.CASCADE)
+    wlasciciel = models.ForeignKey(User, related_name='Osoba', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.imie + " " + self.nazwisko

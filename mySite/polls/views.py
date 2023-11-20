@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -42,6 +42,7 @@ def stanowisko_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def osoba_list(request):
     if request.method == 'GET':
         osoby = Osoba.objects.all()
@@ -49,6 +50,7 @@ def osoba_list(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def osoba_detail(request, pk):
     try:
         osoba = Osoba.objects.get(pk=pk)

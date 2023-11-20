@@ -11,4 +11,5 @@ urlpatterns = [
     path('osoby/<str:string>/', views.osoba_string),
     path('stanowiska/', views.stanowisko_list),
     path('stanowiska/<int:pk>/', views.stanowisko_detail),
+    path('login/', include('rest_framework.urls')),
 ]
